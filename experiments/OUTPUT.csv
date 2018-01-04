@@ -1,0 +1,9 @@
+Time,ID,Lat,Lon,Alt,#WiFi networks (up to 10),SSID1,MAC1,Frequncy1,Signal1,SSID2,MAC2,Frequncy2,Signal2,SSID3,MAC3,Frequncy3,Signal3,SSID4,MAC4,Frequncy4,Signal4,SSID5,MAC5,Frequncy5,Signal5,SSID6,MAC6,Frequncy6,Signal6,SSID7,MAC7,Frequncy7,Signal7,SSID8,MAC8,Frequncy8,Signal8,SSID9,MAC9,Frequncy9,Signal9,SSID10,MAC10,Frequncy10,Signal10
+18/11/2017 12:02,LG-D855,32.14427332,34.82916144,61,10,ori1,dc:0b:34:f2:2f:cd,6,-42.0,ori,dc:0b:34:f2:2f:cd,6,-42.0,ori2,dc:0b:34:f2:2f:cd,6,-43.0,ori3,dc:0b:34:f2:2f:cd,6,-44.0,ori4,dc:0b:34:f2:2f:cd,6,-45.0,ori5,dc:0b:34:f2:2f:cd,6,-46.0,ori6,dc:0b:34:f2:2f:cd,6,-47.0,ori7,dc:0b:34:f2:2f:cd,6,-48.0,ori8,dc:0b:34:f2:2f:cd,6,-49.0,ori9,dc:0b:34:f2:2f:cd,6,-50.0
+18/11/2017 12:03,LG-D855,32.14482267,34.82946355,56,1,Provision-ISR_9944,08:97:58:33:6e:ea,4,-79.0
+18/11/2017 12:03,LG-D855,32.14439078,34.82924207,61,1,rami kantor,3c:1e:04:07:6e:ea,1,-86.0
+18/11/2017 12:02,LG-D855,32.14429222,34.82920186,62,1,,aa:54:b2:e9:00:06,6,-81.0
+18/11/2017 12:03,LG-D855,32.14452058,34.8292909,62,1,,aa:54:b2:e9:00:06,6,-71.0
+18/11/2017 12:03,LG-D855,32.14466337,34.82939886,58,1,Provision-ISR_9944,08:97:58:33:6e:ea,4,-89.0
+18/11/2017 12:03,LG-D855,32.14469793,34.82940819,58,1,Provision-ISR_9944,08:97:58:33:6e:ea,4,-84.0
+

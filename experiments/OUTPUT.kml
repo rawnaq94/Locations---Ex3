@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"><Document>
+<Placemark>
+<name>ori1</name>
+<TimeStamp>
+<when>18/11/2017 12:02</when>
+</TimeStamp>
+<description>dc:0b:34:f2:2f:cd</description>
+<Point>
+<coordinates>34.82916144,32.14427332,61</coordinates></Point>
+</Placemark><Placemark>
+<name>ori2</name>
+<TimeStamp>
+<when>18/11/2017 12:02</when>
+</TimeStamp>
+<description>dc:0b:34:f2:2f:cd</description>
+<Point>
+<coordinates>34.82916144,32.14427332,61</coordinates></Point>
+</Placemark><Placemark>
+<name>ori3</name>
+<TimeStamp>
+<when>18/11/2017 12:02</when>
+</TimeStamp>
+<description>dc:0b:34:f2:2f:cd</description>
+<Point>
+<coordinates>34.82916144,32.14427332,61</coordinates></Point>
+</Placemark><Placemark>
+<name>ori4</name>
+<TimeStamp>
+<when>18/11/2017 12:02</when>
+</TimeStamp>
+<description>dc:0b:34:f2:2f:cd</description>
+<Point>
+<coordinates>34.82916144,32.14427332,61</coordinates></Point>
+</Placemark><Placemark>
+<name>ori5</name>
+<TimeStamp>
+<when>18/11/2017 12:02</when>
+</TimeStamp>
+<description>dc:0b:34:f2:2f:cd</description>
+<Point>
+<coordinates>34.82916144,32.14427332,61</coordinates></Point>
+</Placemark><Placemark>
+<name>ori6</name>
+<TimeStamp>
+<when>18/11/2017 12:02</when>
+</TimeStamp>
+<description>dc:0b:34:f2:2f:cd</description>
+<Point>
+<coordinates>34.82916144,32.14427332,61</coordinates></Point>
+</Placemark><Placemark>
+<name>ori7</name>
+<TimeStamp>
+<when>18/11/2017 12:02</when>
+</TimeStamp>
+<description>dc:0b:34:f2:2f:cd</description>
+<Point>
+<coordinates>34.82916144,32.14427332,61</coordinates></Point>
+</Placemark><Placemark>
+<name>ori8</name>
+<TimeStamp>
+<when>18/11/2017 12:02</when>
+</TimeStamp>
+<description>dc:0b:34:f2:2f:cd</description>
+<Point>
+<coordinates>34.82916144,32.14427332,61</coordinates></Point>
+</Placemark><Placemark>
+<name>ori9</name>
+<TimeStamp>
+<when>18/11/2017 12:02</when>
+</TimeStamp>
+<description>dc:0b:34:f2:2f:cd</description>
+<Point>
+<coordinates>34.82916144,32.14427332,61</coordinates></Point>
+</Placemark><Placemark>
+<name>ori10</name>
+<TimeStamp>
+<when>18/11/2017 12:02</when>
+</TimeStamp>
+<description>dc:0b:34:f2:2f:cd</description>
+<Point>
+<coordinates>34.82916144,32.14427332,61</coordinates></Point>
+</Placemark><Placemark>
+<name>ori11</name>
+<TimeStamp>
+<when>18/11/2017 12:02</when>
+</TimeStamp>
+<description>dc:0b:34:f2:2f:cd</description>
+<Point>
+<coordinates>34.82916144,32.14427332,61</coordinates></Point>
+</Placemark><Placemark>
+<name>ori</name>
+<TimeStamp>
+<when>18/11/2017 12:02</when>
+</TimeStamp>
+<description>dc:0b:34:f2:2f:cd</description>
+<Point>
+<coordinates>34.82916144,32.14427332,61</coordinates></Point>
+</Placemark><Placemark>
+<name>Provision-ISR_9944</name>
+<TimeStamp>
+<when>18/11/2017 12:03</when>
+</TimeStamp>
+<description>08:97:58:33:6e:ea</description>
+<Point>
+<coordinates>34.82946355,32.14482267,56</coordinates></Point>
+</Placemark><Placemark>
+<name>rami kantor</name>
+<TimeStamp>
+<when>18/11/2017 12:03</when>
+</TimeStamp>
+<description>3c:1e:04:07:6e:ea</description>
+<Point>
+<coordinates>34.82924207,32.14439078,61</coordinates></Point>
+</Placemark><Placemark>
+<name></name>
+<TimeStamp>
+<when>18/11/2017 12:02</when>
+</TimeStamp>
+<description>aa:54:b2:e9:00:06</description>
+<Point>
+<coordinates>34.82920186,32.14429222,62</coordinates></Point>
+</Placemark><Placemark>
+<name></name>
+<TimeStamp>
+<when>18/11/2017 12:03</when>
+</TimeStamp>
+<description>aa:54:b2:e9:00:06</description>
+<Point>
+<coordinates>34.8292909,32.14452058,62</coordinates></Point>
+</Placemark><Placemark>
+<name>Provision-ISR_9944</name>
+<TimeStamp>
+<when>18/11/2017 12:03</when>
+</TimeStamp>
+<description>08:97:58:33:6e:ea</description>
+<Point>
+<coordinates>34.82939886,32.14466337,58</coordinates></Point>
+</Placemark><Placemark>
+<name>Provision-ISR_9944</name>
+<TimeStamp>
+<when>18/11/2017 12:03</when>
+</TimeStamp>
+<description>08:97:58:33:6e:ea</description>
+<Point>
+<coordinates>34.82940819,32.14469793,58</coordinates></Point>
+</Placemark>
+</Document>
+</kml>
