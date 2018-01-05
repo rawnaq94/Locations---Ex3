@@ -7,6 +7,10 @@ import models.ScanInfo;
 import models.WifiNetwork;
 
 public class AndFilter implements Filter {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5305747891352629205L;
 	private Filter filter;
 	private Filter otherFilter;
 

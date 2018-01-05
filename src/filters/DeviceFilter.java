@@ -8,6 +8,10 @@ import models.ScanInfo;
 import models.WifiNetwork;
 
 public class DeviceFilter implements Filter {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5390500594907555209L;
 	String str;
 
 	public DeviceFilter(String str) {

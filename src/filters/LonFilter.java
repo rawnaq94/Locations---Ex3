@@ -8,6 +8,10 @@ import models.ScanInfo;
 import models.WifiNetwork;
 
 public class LonFilter implements Filter {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8063876880082907864L;
 	double min;
 	double max;
 

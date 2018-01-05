@@ -8,6 +8,10 @@ import models.ScanInfo;
 import models.WifiNetwork;
 
 public class OrFilter implements Filter {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1344822895836621240L;
 	private Filter filter;
 	private Filter otherFilter;
 

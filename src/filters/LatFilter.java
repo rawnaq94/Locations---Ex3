@@ -8,6 +8,10 @@ import models.ScanInfo;
 import models.WifiNetwork;
 
 public class LatFilter implements Filter {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6327336357516935654L;
 	double min;
 	double max;
 

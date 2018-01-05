@@ -12,6 +12,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -62,6 +66,9 @@ public class MainFrame extends JFrame {
 	private final JTextField sig3;
 	private final JButton submitAlgo2;
 	private final JLabel algo2results;
+	private final JLabel scanLineLabel;
+	private final JTextField scanLineText;
+	private final JButton scanLineSubmit;
 
 	// Filter panel
 	private final JLabel filterHeaderLabel;
@@ -122,6 +129,9 @@ public class MainFrame extends JFrame {
 		setDefaultTextFeature(sig3, "SIG3");
 		submitAlgo2 = new JButton("Submit");
 		algo2results = new JLabel("Lat,Lon,Alt,Acc", JLabel.TRAILING);
+		scanLineLabel = new JLabel("Scan Line:", JLabel.TRAILING);
+		scanLineText = new JTextField(12);
+		scanLineSubmit = new JButton("Load to the form below");
 
 		// Filter panel
 		filterHeaderLabel = new JLabel("Current Filter: ", JLabel.TRAILING);
@@ -336,7 +346,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (scanService.getFilter() == null) {
-					JOptionPane.showMessageDialog(MainFrame.this, "Current filter is null", "Error",
+					JOptionPane.showMessageDialog(MainFrame.this, "Current filter is empty", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -352,7 +362,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (scanService.getFilter() == null) {
-					JOptionPane.showMessageDialog(MainFrame.this, "Current filter is null", "Error",
+					JOptionPane.showMessageDialog(MainFrame.this, "Current filter is empty", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -368,7 +378,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (scanService.getFilter() == null) {
-					JOptionPane.showMessageDialog(MainFrame.this, "Current filter is null", "Error",
+					JOptionPane.showMessageDialog(MainFrame.this, "Current filter is empty", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -391,6 +401,11 @@ public class MainFrame extends JFrame {
 		saveFilterButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (scanService.getFilter() == null) {
+					JOptionPane.showMessageDialog(MainFrame.this, "Current filter is empty", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 				JFileChooser chooser = new JFileChooser();
 				FileNameExtensionFilter filter = new FileNameExtensionFilter("Filter File", "filter");
 				chooser.setFileFilter(filter);
@@ -400,8 +415,17 @@ public class MainFrame extends JFrame {
 				chooser.setAcceptAllFileFilterUsed(false);
 
 				if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-					scanService.getFilter(filter);
-					
+					try {
+						FileOutputStream myFileOutputStream = new FileOutputStream(
+								chooser.getSelectedFile().getAbsolutePath() + ".filter");
+						ObjectOutputStream myObjectOutputStream = new ObjectOutputStream(myFileOutputStream);
+						myObjectOutputStream.writeObject(scanService.getFilter());
+						myObjectOutputStream.close();
+					} catch (Exception ee) {
+						JOptionPane.showMessageDialog(MainFrame.this, "Error saving the filter: " + ee.getMessage(),
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+
 				}
 			}
 		});
@@ -417,12 +441,19 @@ public class MainFrame extends JFrame {
 				chooser.setAcceptAllFileFilterUsed(false);
 
 				if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-					Filter filter = ;
-					scanService.setFilter(filter);
-					filterLabel.setText(scanService.getFilterString());
-					updateScansInfo();
+					try {
+						FileInputStream myFileInputStream = new FileInputStream(
+								chooser.getSelectedFile().getAbsolutePath());
+						ObjectInputStream myObjectInputStream = new ObjectInputStream(myFileInputStream);
+						scanService.setFilter((Filter) myObjectInputStream.readObject());
+						myObjectInputStream.close();
+						filterLabel.setText(scanService.getFilterString());
+						updateScansInfo();
+					} catch (Exception ee) {
+						JOptionPane.showMessageDialog(MainFrame.this, "Error loading the filter: " + ee.getMessage(),
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
-				updateScansInfo();
 			}
 		});
 		submitAlgo1.addActionListener(new ActionListener() {
@@ -550,6 +581,27 @@ public class MainFrame extends JFrame {
 			public boolean doubleEquals(double x, double y) {
 				return Double.doubleToLongBits(x) == Double.doubleToLongBits(y);
 			}
+		});
+
+		scanLineSubmit.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				String line = scanLineText.getText();
+				String[] parts = line.split(",");
+				if (parts.length < 18) {
+					JOptionPane.showMessageDialog(MainFrame.this, "Bad line. It should contain 3 macs minimum.",
+							"Input error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				mac1.setText(parts[7]);
+				sig1.setText(parts[9]);
+				mac2.setText(parts[11]);
+				sig2.setText(parts[13]);
+				mac3.setText(parts[15]);
+				sig3.setText(parts[17]);
+			}
+
 		});
 	}
 
@@ -705,7 +757,29 @@ public class MainFrame extends JFrame {
 				algo1Panel.setBorder(border);
 				algo1Panel.setBackground(Color.WHITE);
 			}
-			JPanel algo2Panel = new JPanel();
+			JPanel algo21Panel = new JPanel();
+			{
+				JPanel algo21 = new JPanel();
+				algo21.setLayout(new BoxLayout(algo21, BoxLayout.X_AXIS));
+				algo21.add(scanLineLabel);
+				algo21.add(scanLineText);
+
+				JPanel algo22 = new JPanel();
+				algo22.setLayout(new BoxLayout(algo22, BoxLayout.X_AXIS));
+				algo22.add(scanLineSubmit);
+
+				algo21Panel.setLayout(new BoxLayout(algo21Panel, BoxLayout.Y_AXIS));
+				algo21Panel.add(algo21);
+				algo21Panel.add(algo22);
+
+				TitledBorder border = new TitledBorder("Algorithm 2a");
+				border.setTitleJustification(TitledBorder.LEFT);
+				border.setTitlePosition(TitledBorder.TOP);
+				algo21Panel.setBorder(border);
+				algo21Panel.setBackground(Color.WHITE);
+			}
+
+			JPanel algo22Panel = new JPanel();
 			{
 				JPanel algo21 = new JPanel();
 				algo21.setLayout(new BoxLayout(algo21, BoxLayout.X_AXIS));
@@ -729,22 +803,23 @@ public class MainFrame extends JFrame {
 				algo24.add(submitAlgo2);
 				algo24.add(algo2results);
 
-				algo2Panel.setLayout(new BoxLayout(algo2Panel, BoxLayout.Y_AXIS));
-				algo2Panel.add(algo21);
-				algo2Panel.add(algo22);
-				algo2Panel.add(algo23);
-				algo2Panel.add(algo24);
+				algo22Panel.setLayout(new BoxLayout(algo22Panel, BoxLayout.Y_AXIS));
+				algo22Panel.add(algo21);
+				algo22Panel.add(algo22);
+				algo22Panel.add(algo23);
+				algo22Panel.add(algo24);
 
-				TitledBorder border = new TitledBorder("Algorithm 2");
+				TitledBorder border = new TitledBorder("Algorithm 2b");
 				border.setTitleJustification(TitledBorder.LEFT);
 				border.setTitlePosition(TitledBorder.TOP);
-				algo2Panel.setBorder(border);
-				algo2Panel.setBackground(Color.WHITE);
+				algo22Panel.setBorder(border);
+				algo22Panel.setBackground(Color.WHITE);
 			}
 
 			algoPanel.setLayout(new BoxLayout(algoPanel, BoxLayout.Y_AXIS));
 			algoPanel.add(algo1Panel);
-			algoPanel.add(algo2Panel);
+			algoPanel.add(algo21Panel);
+			algoPanel.add(algo22Panel);
 
 			TitledBorder border = new TitledBorder("Algorithms");
 			border.setTitleJustification(TitledBorder.LEFT);

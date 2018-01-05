@@ -9,6 +9,10 @@ import models.ScanInfo;
 import models.WifiNetwork;
 
 public class TimeFilter implements Filter {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3707366720207896078L;
 	Date min;
 	Date max;
 
