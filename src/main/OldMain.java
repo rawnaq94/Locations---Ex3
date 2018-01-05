@@ -13,6 +13,7 @@ import utils.CsvService;
 import utils.IO;
 import utils.KmlService;
 
+@Deprecated
 class OldMain {
 	public static void oldMain(String[] args) {
 		if (args.length != 2) {

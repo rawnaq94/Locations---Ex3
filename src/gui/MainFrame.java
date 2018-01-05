@@ -32,6 +32,14 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import filters.AltFilter;
+import filters.AndFilter;
+import filters.Filter;
+import filters.LatFilter;
+import filters.LonFilter;
+import filters.NotFilter;
+import filters.OrFilter;
+import filters.TimeFilter;
 import models.ScanInfo;
 import models.WifiNetwork;
 import utils.Four;
@@ -56,6 +64,8 @@ public class MainFrame extends JFrame {
 	private final JLabel algo2results;
 
 	// Filter panel
+	private final JLabel filterHeaderLabel;
+	private final JLabel filterLabel;
 	private final JLabel timeLabel;
 	private final JTextField timeMin;
 	private final JTextField timeMax;
@@ -72,7 +82,13 @@ public class MainFrame extends JFrame {
 	private final JTextField altMin;
 	private final JTextField altMax;
 	private final JRadioButton altRadio;
-	private final JButton submitFilterButton;
+	private final JButton setFilterButton;
+	private final JButton clearFilterButton;
+	private final JButton saveFilterButton;
+	private final JButton loadFilterButton;
+	private final JButton notFilterButton;
+	private final JButton orFilterButton;
+	private final JButton andFilterButton;
 	private final ButtonGroup group;
 
 	// Data panel
@@ -80,6 +96,7 @@ public class MainFrame extends JFrame {
 	private final JButton addCsv;
 	private final JButton clearData;
 	private final JButton saveToCsv;
+	private final JButton saveToKml;
 	private final JLabel dataSizeLabel;
 	private final JLabel numberOfApsLabel;
 
@@ -107,6 +124,8 @@ public class MainFrame extends JFrame {
 		algo2results = new JLabel("Lat,Lon,Alt,Acc", JLabel.TRAILING);
 
 		// Filter panel
+		filterHeaderLabel = new JLabel("Current Filter: ", JLabel.TRAILING);
+		filterLabel = new JLabel("()", JLabel.TRAILING);
 		group = new ButtonGroup();
 		timeLabel = new JLabel("Time: ", JLabel.TRAILING);
 		timeMin = new JTextField(15);
@@ -124,7 +143,13 @@ public class MainFrame extends JFrame {
 		altMin = new JTextField(15);
 		altMax = new JTextField(15);
 		altRadio = new JRadioButton();
-		submitFilterButton = new JButton("Submit Filter");
+		setFilterButton = new JButton("Set current Filter");
+		notFilterButton = new JButton("Negate current Filter");
+		andFilterButton = new JButton("And with current Filter");
+		orFilterButton = new JButton("Or with current Filter");
+		loadFilterButton = new JButton("Load Filter");
+		saveFilterButton = new JButton("Save Filter");
+		clearFilterButton = new JButton("Clear Filter");
 		setDefaultTextFeature(timeMin, "Min [dd/MM/yyyy HH:mm]");
 		setDefaultTextFeature(latMin, "Min");
 		setDefaultTextFeature(lonMin, "Min");
@@ -139,6 +164,7 @@ public class MainFrame extends JFrame {
 		addCsv = new JButton("Add CSV");
 		clearData = new JButton("Clear Data");
 		saveToCsv = new JButton("Save To CSV");
+		saveToKml = new JButton("Save To KML");
 		dataSizeLabel = new JLabel("", JLabel.TRAILING);
 		numberOfApsLabel = new JLabel("", JLabel.TRAILING);
 		updateScansInfo();
@@ -178,9 +204,45 @@ public class MainFrame extends JFrame {
 	}
 
 	private void updateScansInfo() {
-		dataSizeLabel.setText("# of scans: " + scanService.scans.keySet().size());
+		dataSizeLabel.setText("# of scans: " + scanService.getScans().keySet().size());
 		numberOfApsLabel.setText("# of AP: "
-				+ scanService.scans.values().stream().flatMap(x -> x.stream()).map(x -> x.mac).distinct().count());
+				+ scanService.getScans().values().stream().flatMap(x -> x.stream()).map(x -> x.mac).distinct().count());
+	}
+
+	public Filter getFilter() {
+		Filter filter = null;
+		try {
+			if (timeRadio.isSelected()) {
+				SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
+				Date min = timeMin.getText().equals("Min [dd/MM/yyyy HH:mm]") ? new Date(Long.MIN_VALUE)
+						: parser.parse(timeMin.getText());
+
+				Date max = timeMax.getText().equals("Max [dd/MM/yyyy HH:mm]") ? new Date(Long.MAX_VALUE)
+						: parser.parse(timeMax.getText());
+				filter = new TimeFilter(min, max);
+			}
+			if (latRadio.isSelected()) {
+				double min = latMin.getText().equals("Min") ? Double.MIN_VALUE : Double.parseDouble(latMin.getText());
+				double max = latMax.getText().equals("Max") ? Double.MAX_VALUE : Double.parseDouble(latMax.getText());
+				filter = new LatFilter(min, max);
+
+			}
+			if (altRadio.isSelected()) {
+				double min = altMin.getText().equals("Min") ? Double.MIN_VALUE : Double.parseDouble(altMin.getText());
+				double max = altMax.getText().equals("Max") ? Double.MAX_VALUE : Double.parseDouble(altMax.getText());
+				filter = new AltFilter(min, max);
+
+			}
+			if (lonRadio.isSelected()) {
+				double min = lonMin.getText().equals("Min") ? Double.MIN_VALUE : Double.parseDouble(lonMin.getText());
+				double max = lonMax.getText().equals("Max") ? Double.MAX_VALUE : Double.parseDouble(lonMax.getText());
+				filter = new LonFilter(min, max);
+			}
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(MainFrame.this, "Bad filter", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		return filter;
 	}
 
 	public void addListeners() {
@@ -233,70 +295,134 @@ public class MainFrame extends JFrame {
 				FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV File", "csv");
 				chooser.setFileFilter(filter);
 				chooser.setCurrentDirectory(new java.io.File("."));
-				chooser.setDialogTitle("Choose CSV file");
+				chooser.setDialogTitle("Save to CSV file");
+				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				chooser.setAcceptAllFileFilterUsed(false);
+
+				if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+					scanService.saveToCsv(chooser.getSelectedFile().getAbsolutePath() + ".csv");
+				}
+			}
+		});
+		saveToKml.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("KML File", "kml");
+				chooser.setFileFilter(filter);
+				chooser.setCurrentDirectory(new java.io.File("."));
+				chooser.setDialogTitle("Save to KML file");
+				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				chooser.setAcceptAllFileFilterUsed(false);
+
+				if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+					scanService.saveToKml(chooser.getSelectedFile().getAbsolutePath() + ".kml");
+				}
+			}
+		});
+		setFilterButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Filter filter = getFilter();
+				if (filter != null) {
+					scanService.setFilter(filter);
+					filterLabel.setText(scanService.getFilterString());
+					updateScansInfo();
+				}
+			}
+		});
+		andFilterButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (scanService.getFilter() == null) {
+					JOptionPane.showMessageDialog(MainFrame.this, "Current filter is null", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				Filter filter = getFilter();
+				if (filter != null) {
+					scanService.setFilter(new AndFilter(scanService.getFilter(), filter));
+					filterLabel.setText(scanService.getFilterString());
+					updateScansInfo();
+				}
+			}
+		});
+		orFilterButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (scanService.getFilter() == null) {
+					JOptionPane.showMessageDialog(MainFrame.this, "Current filter is null", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				Filter filter = getFilter();
+				if (filter != null) {
+					scanService.setFilter(new OrFilter(scanService.getFilter(), filter));
+					filterLabel.setText(scanService.getFilterString());
+					updateScansInfo();
+				}
+			}
+		});
+		notFilterButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (scanService.getFilter() == null) {
+					JOptionPane.showMessageDialog(MainFrame.this, "Current filter is null", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				Filter filter = getFilter();
+				if (filter != null) {
+					scanService.setFilter(new NotFilter(scanService.getFilter()));
+					filterLabel.setText(scanService.getFilterString());
+					updateScansInfo();
+				}
+			}
+		});
+		clearFilterButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				scanService.clearFilter();
+				filterLabel.setText(scanService.getFilterString());
+				updateScansInfo();
+			}
+		});
+		saveFilterButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("Filter File", "filter");
+				chooser.setFileFilter(filter);
+				chooser.setCurrentDirectory(new java.io.File("."));
+				chooser.setDialogTitle("Save Filter");
+				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				chooser.setAcceptAllFileFilterUsed(false);
+
+				if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+					scanService.getFilter(filter);
+					
+				}
+			}
+		});
+		loadFilterButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("Filter File", "filter");
+				chooser.setFileFilter(filter);
+				chooser.setCurrentDirectory(new java.io.File("."));
+				chooser.setDialogTitle("Load Filter");
 				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				chooser.setAcceptAllFileFilterUsed(false);
 
 				if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-					scanService.saveToCsv(chooser.getSelectedFile().getAbsolutePath());
+					Filter filter = ;
+					scanService.setFilter(filter);
+					filterLabel.setText(scanService.getFilterString());
+					updateScansInfo();
 				}
-			}
-		});
-		submitFilterButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					if (timeRadio.isSelected()) {
-						SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-
-						Date min = timeMin.getText().equals("Min [dd/MM/yyyy HH:mm]") ? new Date(Long.MIN_VALUE)
-								: parser.parse(timeMin.getText());
-
-						Date max = timeMax.getText().equals("Max [dd/MM/yyyy HH:mm]") ? new Date(Long.MAX_VALUE)
-								: parser.parse(timeMax.getText());
-						scanService.scans = scanService.scans.entrySet().stream()
-								.filter(p -> (p.getKey().time.after(min) || p.getKey().time.equals(min))
-										&& (p.getKey().time.before(max) || p.getKey().time.equals(max)))
-								.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
-						updateScansInfo();
-
-					}
-					if (latRadio.isSelected()) {
-						double min = latMin.getText().equals("Min") ? Double.MIN_VALUE
-								: Double.parseDouble(latMin.getText());
-						double max = latMax.getText().equals("Max") ? Double.MAX_VALUE
-								: Double.parseDouble(latMax.getText());
-						scanService.scans = scanService.scans.entrySet().stream()
-								.filter(p -> p.getKey().latitude >= min && p.getKey().latitude <= max)
-								.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
-						updateScansInfo();
-					}
-					if (altRadio.isSelected()) {
-						double min = altMin.getText().equals("Min") ? Double.MIN_VALUE
-								: Double.parseDouble(altMin.getText());
-						double max = altMax.getText().equals("Max") ? Double.MAX_VALUE
-								: Double.parseDouble(altMax.getText());
-						scanService.scans = scanService.scans.entrySet().stream()
-								.filter(p -> p.getKey().altitude >= min && p.getKey().altitude <= max)
-								.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
-						updateScansInfo();
-
-					}
-					if (lonRadio.isSelected()) {
-						double min = lonMin.getText().equals("Min") ? Double.MIN_VALUE
-								: Double.parseDouble(lonMin.getText());
-						double max = lonMax.getText().equals("Max") ? Double.MAX_VALUE
-								: Double.parseDouble(lonMax.getText());
-						scanService.scans = scanService.scans.entrySet().stream()
-								.filter(p -> p.getKey().longitude >= min && p.getKey().longitude <= max)
-								.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
-						updateScansInfo();
-
-					}
-				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(MainFrame.this, "Bad filter", "Error", JOptionPane.ERROR_MESSAGE);
-				}
+				updateScansInfo();
 			}
 		});
 		submitAlgo1.addActionListener(new ActionListener() {
@@ -304,7 +430,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				String macStr = mac.getText();
-				List<Pair<ScanInfo, WifiNetwork>> macScans = scanService.scans.entrySet().stream()
+				List<Pair<ScanInfo, WifiNetwork>> macScans = scanService.getScans().entrySet().stream()
 						.filter(e -> e.getValue().stream().anyMatch(w -> w.mac.equals(macStr))) //
 						.map(e -> new Pair<ScanInfo, WifiNetwork>(e.getKey(),
 								e.getValue().stream().filter(w -> w.mac.equals(macStr)).findFirst().get())) //
@@ -361,7 +487,7 @@ public class MainFrame extends JFrame {
 					inputMac3 = mac3.getText();
 					inputSig3 = Double.parseDouble(sig3.getText());
 
-					List<Pair<ScanInfo, Double>> pairs = scanService.scans.entrySet().stream()
+					List<Pair<ScanInfo, Double>> pairs = scanService.getScans().entrySet().stream()
 							.filter(e -> e.getValue().stream().anyMatch(w -> w.mac.equals(inputMac1))
 									&& e.getValue().stream().anyMatch(w -> w.mac.equals(inputMac2))
 									&& e.getValue().stream().anyMatch(w -> w.mac.equals(inputMac3))) //
@@ -427,7 +553,7 @@ public class MainFrame extends JFrame {
 		});
 	}
 
-	public void clear() {
+	public void clearFilter() {
 		timeMin.setText("Min [dd/MM/yyyy HH:mm]");
 		timeMax.setText("Max [dd/MM/yyyy HH:mm]");
 		latMin.setText("Min");
@@ -436,6 +562,10 @@ public class MainFrame extends JFrame {
 		lonMax.setText("Max");
 		altMin.setText("Min");
 		altMax.setText("Max");
+		group.clearSelection();
+	}
+
+	public void clear() {
 		mac.setText("MAC");
 		mac1.setText("MAC1");
 		sig1.setText("SIG1");
@@ -443,10 +573,10 @@ public class MainFrame extends JFrame {
 		sig2.setText("SIG2");
 		mac3.setText("MAC3");
 		sig3.setText("SIG3");
-		scanService.clear();
+		scanService.clearScans();
 		clearAlgo1Result();
 		clearAlgo2Result();
-		group.clearSelection();
+		clearFilter();
 	}
 
 	public void clearAlgo1Result() {
@@ -482,6 +612,7 @@ public class MainFrame extends JFrame {
 			dataPanel.add(addCsv);
 			dataPanel.add(clearData);
 			dataPanel.add(saveToCsv);
+			dataPanel.add(saveToKml);
 			dataPanel.add(dataSizeLabel);
 			dataPanel.add(numberOfApsLabel);
 
@@ -495,6 +626,10 @@ public class MainFrame extends JFrame {
 
 		JPanel filterPanel = new JPanel();
 		{
+			JPanel currentFilterPanel = new JPanel();
+			currentFilterPanel.setLayout(new BoxLayout(currentFilterPanel, BoxLayout.X_AXIS));
+			currentFilterPanel.add(filterHeaderLabel);
+			currentFilterPanel.add(filterLabel);
 			JPanel timePanel = new JPanel();
 			timePanel.setLayout(new BoxLayout(timePanel, BoxLayout.X_AXIS));
 			timePanel.add(timeLabel);
@@ -521,11 +656,18 @@ public class MainFrame extends JFrame {
 			altPanel.add(altRadio);
 
 			filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.Y_AXIS));
+			filterPanel.add(currentFilterPanel);
 			filterPanel.add(timePanel);
 			filterPanel.add(latPanel);
 			filterPanel.add(lonPanel);
 			filterPanel.add(altPanel);
-			filterPanel.add(submitFilterButton);
+			filterPanel.add(setFilterButton);
+			filterPanel.add(clearFilterButton);
+			filterPanel.add(saveFilterButton);
+			filterPanel.add(loadFilterButton);
+			filterPanel.add(andFilterButton);
+			filterPanel.add(orFilterButton);
+			filterPanel.add(notFilterButton);
 
 			group.add(altRadio);
 			group.add(lonRadio);
