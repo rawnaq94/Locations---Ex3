@@ -7,6 +7,9 @@ import java.util.Map.Entry;
 import models.ScanInfo;
 import models.WifiNetwork;
 
+/*
+ * handles all kml related operations
+ */
 public class KmlService {
 
 	private static String KmlFileTemplateFormat = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document>\n%s\n</Document>\n</kml>";

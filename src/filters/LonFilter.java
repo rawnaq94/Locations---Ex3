@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 import models.ScanInfo;
 import models.WifiNetwork;
 
+/**
+ * Longitude filter
+ */
 public class LonFilter implements Filter {
 	/**
 	 * 

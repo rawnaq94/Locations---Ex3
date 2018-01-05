@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 import models.ScanInfo;
 import models.WifiNetwork;
 
+/**
+ * Negation of one filter
+ */
 public class NotFilter implements Filter {
 	/**
 	 * 

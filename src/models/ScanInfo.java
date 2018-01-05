@@ -2,6 +2,9 @@ package models;
 
 import java.util.Date;
 
+/*
+ * represents scan info
+ */
 public class ScanInfo {
 	public Date time;
 	public String id;

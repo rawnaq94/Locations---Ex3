@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 
+/*
+ * handles all Input\Output operations
+ */
 public class IO {
 	public static String[] getFileNamesInFolder(String folderPath) {
 		final File file = new File(folderPath);

@@ -1,5 +1,8 @@
 package models;
 
+/*
+ * represents wifi information
+ */
 public class WifiNetwork {
 	@Override
 	public int hashCode() {

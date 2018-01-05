@@ -44,13 +44,16 @@ import filters.LonFilter;
 import filters.NotFilter;
 import filters.OrFilter;
 import filters.TimeFilter;
-import models.INeedToReloadData;
 import models.ScanInfo;
 import models.WifiNetwork;
 import utils.Four;
+import utils.INeedToReloadData;
 import utils.Pair;
 import utils.ScansService;
 
+/*
+ * the main window of the app
+ */
 public class MainFrame extends JFrame implements INeedToReloadData {
 	private static final long serialVersionUID = 1L;
 	private final JPanel mainPanel;

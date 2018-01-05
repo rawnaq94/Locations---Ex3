@@ -7,10 +7,10 @@ import java.util.stream.Collectors;
 import models.ScanInfo;
 import models.WifiNetwork;
 
+/**
+ * Altitude filter
+ */
 public class AltFilter implements Filter {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4056736915027528579L;
 	double min;
 	double max;

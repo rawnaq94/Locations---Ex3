@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 import models.ScanInfo;
 import models.WifiNetwork;
 
+/**
+ * Latitude filter
+ */
 public class LatFilter implements Filter {
 	/**
 	 * 

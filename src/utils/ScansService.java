@@ -9,10 +9,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import filters.Filter;
-import models.INeedToReloadData;
 import models.ScanInfo;
 import models.WifiNetwork;
 
+/*
+ * this service wrap the scans results and handle all the operations related to them including the filters.
+ */
 public class ScansService implements INeedToReloadData {
 	private Map<ScanInfo, List<WifiNetwork>> scans = new HashMap<ScanInfo, List<WifiNetwork>>();
 	private List<String> csvs = new LinkedList<String>();

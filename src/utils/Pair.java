@@ -1,5 +1,8 @@
 package utils;
 
+/*
+ * represents a pair of objects
+ */
 public class Pair<L, R> {
 
 	private final L left;

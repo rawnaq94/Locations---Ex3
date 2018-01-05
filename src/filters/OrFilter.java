@@ -7,6 +7,9 @@ import java.util.Map.Entry;
 import models.ScanInfo;
 import models.WifiNetwork;
 
+/**
+ * represents OR between two filter
+ */
 public class OrFilter implements Filter {
 	/**
 	 * 

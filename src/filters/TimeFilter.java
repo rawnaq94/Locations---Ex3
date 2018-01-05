@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 import models.ScanInfo;
 import models.WifiNetwork;
 
+/**
+ * Time filter
+ */
 public class TimeFilter implements Filter {
 	/**
 	 * 

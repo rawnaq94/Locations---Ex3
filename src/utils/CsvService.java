@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
 import models.ScanInfo;
 import models.WifiNetwork;
 
+/*
+ * handles all csv related operations
+ */
 public class CsvService {
 	private static final String csvDelim = ",";
 

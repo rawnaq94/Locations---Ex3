@@ -6,6 +6,9 @@ import java.util.Map;
 import models.ScanInfo;
 import models.WifiNetwork;
 
+/**
+ * AND of two filters
+ */
 public class AndFilter implements Filter {
 	/**
 	 * 

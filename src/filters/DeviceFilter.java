@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 import models.ScanInfo;
 import models.WifiNetwork;
 
+/**
+ * Device name filter
+ */
 public class DeviceFilter implements Filter {
 	/**
 	 * 

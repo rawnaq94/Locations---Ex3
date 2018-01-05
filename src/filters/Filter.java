@@ -7,6 +7,9 @@ import java.util.Map;
 import models.ScanInfo;
 import models.WifiNetwork;
 
+/**
+ * Filter interface
+ */
 public interface Filter extends Serializable {
 	public Map<ScanInfo, List<WifiNetwork>> filter(Map<ScanInfo, List<WifiNetwork>> scans);
 
