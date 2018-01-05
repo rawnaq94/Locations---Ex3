@@ -85,8 +85,10 @@ public class CsvService {
 			System.err.println("File not found at " + csvFilePath);
 		} catch (IOException e) {
 			System.err.println(e.toString());
+			System.err.println(csvFilePath);
 		} catch (ParseException e) {
 			System.err.println(e.toString());
+			System.err.println(csvFilePath);
 		}
 		return scans;
 	}

@@ -1,18 +1,27 @@
 package utils;
 
+import java.io.File;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import filters.Filter;
+import models.INeedToReloadData;
 import models.ScanInfo;
 import models.WifiNetwork;
 
-public class ScansService {
+public class ScansService implements INeedToReloadData {
 	private Map<ScanInfo, List<WifiNetwork>> scans = new HashMap<ScanInfo, List<WifiNetwork>>();
+	private List<String> csvs = new LinkedList<String>();
+	private INeedToReloadData notify;
 	private Filter filter = null;
+
+	public ScansService(INeedToReloadData n) {
+		notify = n;
+	}
 
 	public void clearScans() {
 		scans = new HashMap<ScanInfo, List<WifiNetwork>>();
@@ -39,7 +48,7 @@ public class ScansService {
 		IO.writeToFile(Paths.get(absolutePath), KmlService.toString(scans));
 	}
 
-	public void addCsv(String fileFullPath) {
+	private void addCsvInternal(String fileFullPath) {
 		System.out.println("Parsing file: " + fileFullPath);
 		Map<ScanInfo, List<WifiNetwork>> newScans = CsvService.read(Paths.get(fileFullPath));
 		for (Entry<ScanInfo, List<WifiNetwork>> entry : newScans.entrySet()) {
@@ -54,6 +63,30 @@ public class ScansService {
 				scans.put(entry.getKey(), entry.getValue());
 			}
 		}
+	}
+
+	public void addCsv(final String fileFullPath) {
+		addCsvInternal(fileFullPath);
+		csvs.add(fileFullPath);
+		new Thread(new Runnable() {
+			File file = new File(fileFullPath);
+			long lastModified = file.lastModified();
+
+			@Override
+			public void run() {
+				while (true) {
+					try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					if (lastModified != file.lastModified()) {
+						lastModified = file.lastModified();
+						ScansService.this.reload();
+					}
+				}
+			}
+		}).start();
 	}
 
 	public void addDir(String inputDir) {
@@ -78,5 +111,14 @@ public class ScansService {
 		if (filter == null)
 			return "()";
 		return filter.toStr();
+	}
+
+	@Override
+	public void reload() {
+		clearScans();
+		for (String csv : csvs) {
+			addCsvInternal(csv);
+		}
+		notify.reload();
 	}
 }

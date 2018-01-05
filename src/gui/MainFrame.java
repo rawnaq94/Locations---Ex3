@@ -44,13 +44,14 @@ import filters.LonFilter;
 import filters.NotFilter;
 import filters.OrFilter;
 import filters.TimeFilter;
+import models.INeedToReloadData;
 import models.ScanInfo;
 import models.WifiNetwork;
 import utils.Four;
 import utils.Pair;
 import utils.ScansService;
 
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements INeedToReloadData {
 	private static final long serialVersionUID = 1L;
 	private final JPanel mainPanel;
 	private final ScansService scanService;
@@ -108,7 +109,7 @@ public class MainFrame extends JFrame {
 	private final JLabel numberOfApsLabel;
 
 	public MainFrame() {
-		scanService = new ScansService();
+		scanService = new ScansService(this);
 		mainPanel = new JPanel();
 		// Algo panel
 		mac = new JTextField(12);
@@ -843,6 +844,11 @@ public class MainFrame extends JFrame {
 		contentPane.add(mainPanel, BorderLayout.CENTER);
 
 		this.pack();
+	}
+
+	@Override
+	public void reload() {
+		updateScansInfo();
 	}
 
 }
